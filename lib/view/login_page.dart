@@ -19,129 +19,137 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
   return Scaffold(
-    backgroundColor: const Color(0xFFF5F7FA),
+    backgroundColor: const Color(0xFF0D0F12),
     body: Center(
       child: SingleChildScrollView(
+        padding: const EdgeInsets.all(25),
         child: Container(
-          width: 450,
-          padding: const EdgeInsets.all(30),
+          width: 420,
+          padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(25),
+            color: Colors.white.withOpacity(0.05),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.08),
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 25,
-                offset: const Offset(0, 10),
+                color: Colors.black.withOpacity(0.7),
+                blurRadius: 40,
+                offset: const Offset(0, 20),
               ),
             ],
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              Text(
-                "Se connecter à un compte",
+              const SizedBox(height: 10),
+
+              // ***** AVATAR CERCLE *****
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 3,
+                  ),
+                ),
+                child: const CircleAvatar(
+                  radius: 40,
+                  backgroundColor: Color(0xFF1F2430),
+                  child: Icon(Icons.lock_outline, size: 45, color: Colors.white),
+                ),
+              ),
+
+              const SizedBox(height: 25),
+
+              const Text(
+                "Connexion",
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[900],
+                  color: Colors.white,
                 ),
               ),
+
               const SizedBox(height: 10),
+
               Text(
-                "Connecte-toi pour accéder à l'application",
+                "Accédez à votre espace personnel",
                 style: TextStyle(
                   fontSize: 15,
-                  color: Colors.grey[600],
+                  color: Colors.white.withOpacity(0.6),
                 ),
-              ),
-
-              const SizedBox(height: 35),
-
-              const SizedBox(height: 25),
-
-              const Text("Email",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  hintText: "email@example.com",
-                  filled: true,
-                  fillColor: const Color(0xFFF1F5F9),
-                  border: _inputBorder(),
-                  enabledBorder: _inputBorder(),
-                  focusedBorder: _inputBorderFocused(),
-                ),
-              ),
-
-              const SizedBox(height: 25),
-
-              const Text("Mot de passe",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: "Votre mot de passe",
-                  filled: true,
-                  fillColor: const Color(0xFFF1F5F9),
-                  border: _inputBorder(),
-                  enabledBorder: _inputBorder(),
-                  focusedBorder: _inputBorderFocused(),
-                ),
+                textAlign: TextAlign.center,
               ),
 
               const SizedBox(height: 40),
 
+              // ***** EMAIL *****
+              _label("Email"),
+              const SizedBox(height: 8),
+              _glassField(
+                controller: _emailController,
+                hint: "email@example.com",
+                keyboard: TextInputType.emailAddress,
+              ),
+
+              const SizedBox(height: 25),
+
+              // ***** PASSWORD *****
+              _label("Mot de passe"),
+              const SizedBox(height: 8),
+              _glassField(
+                controller: _passwordController,
+                hint: "Votre mot de passe",
+                obscure: true,
+              ),
+
+              const SizedBox(height: 40),
+
+              // ***** BUTTON NEON *****
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _doLogin,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    backgroundColor: const Color(0xFF00FF9D),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(18),
                     ),
-                    elevation: 4,
-                    shadowColor: const Color.fromARGB(255, 244, 244, 244).withOpacity(0.5),
+                    shadowColor: const Color(0xFF00FF9D).withOpacity(0.5),
+                    elevation: 10,
                   ),
                   child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
+                      ? const CircularProgressIndicator(color: Colors.black)
                       : const Text(
                           "SE CONNECTER",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black
+                            color: Colors.black,
                           ),
                         ),
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 25),
 
-              Center(
-                child: TextButton(
-                 onPressed: () {
+              TextButton(
+                onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => RegisterPage()));
                 },
-                  child: const Text(
-                    "Pas encore inscrit ? S'enregistrer",
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 141, 141, 141),
-                      fontWeight: FontWeight.w600,
-                    ),
+                child: Text(
+                  "Créer un compte",
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
                   ),
                 ),
-              )
-
+              ),
             ],
           ),
         ),
@@ -150,22 +158,51 @@ class _LoginPageState extends State<LoginPage> {
   );
 }
 
-OutlineInputBorder _inputBorder() {
-  return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(12),
-    borderSide: BorderSide.none,
-  );
-}
-
-OutlineInputBorder _inputBorderFocused() {
-  return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(
-      color: Color(0xFF26C318),
-      width: 2,
+// ***** LABEL *****
+Widget _label(String text) {
+  return Align(
+    alignment: Alignment.centerLeft,
+    child: Text(
+      text,
+      style: const TextStyle(
+        fontSize: 16,
+        color: Colors.white,
+        fontWeight: FontWeight.w600,
+      ),
     ),
   );
 }
+
+// ***** CHAMP DE SAISIE STYLE GLASS *****
+Widget _glassField({
+  required TextEditingController controller,
+  required String hint,
+  bool obscure = false,
+  TextInputType keyboard = TextInputType.text,
+}) {
+  return TextField(
+    controller: controller,
+    obscureText: obscure,
+    keyboardType: keyboard,
+    style: const TextStyle(color: Colors.white),
+    decoration: InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
+      filled: true,
+      fillColor: Colors.white.withOpacity(0.07),
+      contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide(color: Colors.white.withOpacity(0.15)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: const BorderSide(color: Color(0xFF00FF9D), width: 2),
+      ),
+    ),
+  );
+}
+
 
   void _doLogin() async {
     String email = _emailController.text.trim();

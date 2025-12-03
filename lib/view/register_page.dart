@@ -20,145 +20,109 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
 Widget build(BuildContext context) {
   return Scaffold(
-    backgroundColor: const Color(0xFFF5F7FA),
+    backgroundColor: const Color(0xFFEFF3F7),
     body: Center(
       child: SingleChildScrollView(
+        padding: const EdgeInsets.all(25),
         child: Container(
-          width: 450,
-          padding: const EdgeInsets.all(30),
+          width: 420,
+          padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(25),
+            color: const Color(0xFFEFF3F7),
+            borderRadius: BorderRadius.circular(30),
             boxShadow: [
+              // Ombre supérieure claire
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 25,
-                offset: const Offset(0, 10),
+                color: Colors.white.withOpacity(0.8),
+                offset: const Offset(-10, -10),
+                blurRadius: 20,
+              ),
+              // Ombre inférieure foncée
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                offset: const Offset(10, 10),
+                blurRadius: 20,
               ),
             ],
           ),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
-              Text(
-                "Créer un compte",
+              const SizedBox(height: 5),
+
+              const Text(
+                "Inscription",
                 style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey[900],
+                  fontSize: 32,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF2A2D33),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
+
               Text(
-                "Inscris-toi pour accéder à l'application",
+                "Créer votre nouveau compte",
                 style: TextStyle(
                   fontSize: 15,
-                  color: Colors.grey[600],
+                  color: Colors.grey.shade600,
                 ),
               ),
 
               const SizedBox(height: 35),
 
-              const Text("Nom", 
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
-              ),
+              _label("Nom"),
               const SizedBox(height: 8),
-              TextField(
+              _neuField(
                 controller: _nameController,
-                decoration: InputDecoration(
-                  hintText: "Votre nom",
-                  filled: true,
-                  fillColor: const Color(0xFFF1F5F9),
-                  border: _inputBorder(),
-                  enabledBorder: _inputBorder(),
-                  focusedBorder: _inputBorderFocused(),
-                ),
+                hint: "Votre nom",
               ),
 
               const SizedBox(height: 25),
 
-              const Text("Email",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
-              ),
+              _label("Email"),
               const SizedBox(height: 8),
-              TextField(
+              _neuField(
                 controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  hintText: "email@example.com",
-                  filled: true,
-                  fillColor: const Color(0xFFF1F5F9),
-                  border: _inputBorder(),
-                  enabledBorder: _inputBorder(),
-                  focusedBorder: _inputBorderFocused(),
-                ),
+                hint: "email@example.com",
+                keyboard: TextInputType.emailAddress,
               ),
 
               const SizedBox(height: 25),
 
-              const Text("Mot de passe",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)
-              ),
+              _label("Mot de passe"),
               const SizedBox(height: 8),
-              TextField(
+              _neuField(
                 controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  hintText: "Votre mot de passe",
-                  filled: true,
-                  fillColor: const Color(0xFFF1F5F9),
-                  border: _inputBorder(),
-                  enabledBorder: _inputBorder(),
-                  focusedBorder: _inputBorderFocused(),
-                ),
+                hint: "Votre mot de passe",
+                obscure: true,
               ),
 
               const SizedBox(height: 40),
 
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _register,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    elevation: 4,
-                    shadowColor: const Color.fromARGB(255, 244, 244, 244).withOpacity(0.5),
-                  ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          "S'INSCRIRE",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black
-                          ),
-                        ),
-                ),
+              _neuButton(
+                text: "S'INSCRIRE",
+                loading: _isLoading,
+                onPressed: _isLoading ? null : _register,
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 25),
 
-              Center(
-                child: TextButton(
-                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => LoginPage()));
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => LoginPage()),
+                  );
                 },
-                  child: const Text(
-                    "Déjà un compte ? Se connecter",
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 141, 141, 141),
-                      fontWeight: FontWeight.w600,
-                    ),
+                child: Text(
+                  "Déjà un compte ? Se connecter",
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-              )
-
+              ),
             ],
           ),
         ),
@@ -167,19 +131,97 @@ Widget build(BuildContext context) {
   );
 }
 
-OutlineInputBorder _inputBorder() {
-  return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(12),
-    borderSide: BorderSide.none,
+// ***** LABEL *****
+Widget _label(String text) {
+  return Align(
+    alignment: Alignment.centerLeft,
+    child: Text(
+      text,
+      style: const TextStyle(
+        fontSize: 16,
+        color: Color(0xFF2A2D33),
+        fontWeight: FontWeight.w600,
+      ),
+    ),
   );
 }
 
-OutlineInputBorder _inputBorderFocused() {
-  return OutlineInputBorder(
-    borderRadius: BorderRadius.circular(12),
-    borderSide: const BorderSide(
-      color: Color(0xFF26C318),
-      width: 2,
+// ***** CHAMP NEUMORPHIC *****
+Widget _neuField({
+  required TextEditingController controller,
+  required String hint,
+  bool obscure = false,
+  TextInputType keyboard = TextInputType.text,
+}) {
+  return Container(
+    decoration: BoxDecoration(
+      color: const Color(0xFFEFF3F7),
+      borderRadius: BorderRadius.circular(18),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.white.withOpacity(0.9),
+          offset: const Offset(-5, -5),
+          blurRadius: 12,
+        ),
+        BoxShadow(
+          color: Colors.black.withOpacity(0.08),
+          offset: const Offset(5, 5),
+          blurRadius: 12,
+        ),
+      ],
+    ),
+    child: TextField(
+      controller: controller,
+      obscureText: obscure,
+      keyboardType: keyboard,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: Colors.grey.shade500),
+        contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
+        border: InputBorder.none,
+      ),
+    ),
+  );
+}
+
+// ***** BOUTON NEUMORPHIC *****
+Widget _neuButton({
+  required String text,
+  required VoidCallback? onPressed,
+  required bool loading,
+}) {
+  return GestureDetector(
+    onTap: onPressed,
+    child: Container(
+      height: 58,
+      width: double.infinity,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: const Color(0xFFEFF3F7),
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withOpacity(0.9),
+            offset: const Offset(-6, -6),
+            blurRadius: 15,
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            offset: const Offset(6, 6),
+            blurRadius: 15,
+          ),
+        ],
+      ),
+      child: loading
+          ? const CircularProgressIndicator()
+          : Text(
+              text,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF2A2D33),
+              ),
+            ),
     ),
   );
 }
