@@ -20,6 +20,8 @@ dependencies:
   cloud_firestore: 6.1.0
   shared_preferences: ^2.2.0
   google_sign_in: ^6.2.1
+  http: ^1.1.0
+  crypto: ^3.0.2
 
 dev_dependencies:
   flutter_test:

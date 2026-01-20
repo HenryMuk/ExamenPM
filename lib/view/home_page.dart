@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:l4_seance_2/view/login_page.dart';
 import 'package:l4_seance_2/view/product_add_page.dart';
 import 'package:l4_seance_2/view/product_list_page.dart';
+import 'package:l4_seance_2/view/payment_page.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -104,8 +105,10 @@ class HomePage extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (_) => ProductAddPage()),
           );}),
-                // _buildRoundTile(Icons.help_center, "Support", () {}),
-                // _buildRoundTile(Icons.info_outline, "À propos", () {}),
+                _buildRoundTile(Icons.payment, "Effectuer un paiement", () { Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => PaymentPage()),
+          );}),
               ],
             ),
           ),
