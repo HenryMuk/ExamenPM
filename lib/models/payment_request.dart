@@ -14,8 +14,8 @@ class PaymentRequest {
     this.currency = 'USD',
     this.description = 'Paiement simulation',
     required this.phoneNumber,
-    this.providerCode = 'ORANGE', // ORANGE, VODACOM, AIRTEL
-    this.country = 'CD', // RDC
+    this.providerCode = 'ORANGE',
+    this.country = 'CD',
     this.callbackUrl,
   });
 
@@ -70,7 +70,7 @@ class PaymentResponse {
 
 class PaymentStatus {
   final String reference;
-  final String status; // PENDING, COMPLETED, FAILED, CANCELLED
+  final String status;
   final String? errorMessage;
 
   PaymentStatus({

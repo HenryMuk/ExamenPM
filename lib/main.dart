@@ -11,7 +11,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // 🔥 PERSISTENCE WEB (CRITIQUE)
   await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
 
   runApp(const MyApp());
@@ -27,19 +26,16 @@ class MyApp extends StatelessWidget {
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          // ⏳ Attente Firebase
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
             );
           }
 
-          // ✅ Connecté
           if (snapshot.hasData) {
             return const HomePage();
           }
 
-          // ❌ Pas connecté
           return const LoginPage();
         },
       ),

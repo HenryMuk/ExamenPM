@@ -17,7 +17,6 @@ class HomePage extends StatelessWidget {
     backgroundColor: const Color(0xFF0E1115),
     body: Column(
       children: [
-        // ***** HEADER CARD *****  
         Container(
           width: double.infinity,
           padding: const EdgeInsets.only(top: 60, left: 25, right: 25, bottom: 35),
@@ -88,7 +87,6 @@ class HomePage extends StatelessWidget {
 
         const SizedBox(height: 30),
 
-        // ***** ACTION GRID *****  
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
@@ -119,7 +117,6 @@ class HomePage extends StatelessWidget {
 }
 
 
-/// ***** TILE CIRCULAIRE MODERNE *****
 Widget _buildRoundTile(IconData icon, String title, VoidCallback onTap) {
   return InkWell(
     borderRadius: BorderRadius.circular(30),

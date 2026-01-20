@@ -6,7 +6,6 @@ class PaymentService {
   static const String apiUrl = 'https://api.labyrinthe-rdc.com/api/V1/payment/mobile';
   static const String apiKey = r'$2y$12$9LkDOkTwZAMfsiDO9MY4KuK77Rf8MsN9ZxSQlEABfLfjoijsopTOO';
 
-  /// Initier un paiement mobile
   Future<PaymentResponse> initiatePayment(PaymentRequest request) async {
     try {
       print('🔄 Initiation paiement: ${request.reference}');
@@ -75,7 +74,6 @@ class PaymentService {
     }
   }
 
-  /// Vérifier le statut d'un paiement
   Future<PaymentStatus> checkPaymentStatus(String reference) async {
     try {
       final Map<String, dynamic> payload = {
@@ -119,14 +117,11 @@ class PaymentService {
     }
   }
 
-  /// Générer une référence unique
   static String generateReference() {
     return 'REF-${DateTime.now().millisecondsSinceEpoch}-${(DateTime.now().microsecond % 1000).toString().padLeft(3, '0')}';
   }
 
-  /// Valider le numéro de téléphone
   static bool isValidPhoneNumber(String phone) {
-    // Format: +243... ou 0... (RDC)
     final regex = RegExp(r'^\+?2430\d{8}$|^0\d{9}$');
     return regex.hasMatch(phone.replaceAll(' ', '').replaceAll('-', ''));
   }

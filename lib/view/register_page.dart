@@ -49,7 +49,6 @@ Widget build(BuildContext context) {
 
               const SizedBox(height: 10),
 
-              // ***** AVATAR CERCLE *****
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
@@ -126,18 +125,17 @@ Widget build(BuildContext context) {
 
               const SizedBox(height: 15),
 
-// Bouton Google Sign-In
 ElevatedButton.icon(
   style: ElevatedButton.styleFrom(
     backgroundColor: Colors.white,
     foregroundColor: Colors.black,
-    minimumSize: Size(double.infinity, 50), // Largeur max, hauteur 50
+    minimumSize: Size(double.infinity, 50),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(12),
     ),
   ),
   icon: Image.asset(
-    'assets/images/google_logo.jpg', // ajoute ton icône Google dans assets/
+    'assets/images/google_logo.jpg',
     height: 24,
     width: 24,
   ),
@@ -150,11 +148,9 @@ ElevatedButton.icon(
   ),
   onPressed: () async {
     try {
-      // Connexion Google + récupération du credential
       UserCredential userCredential = await AuthService().signInWithGoogle();
 
       if (userCredential.user != null) {
-        // Tu peux accéder aux infos de l'utilisateur ici :
         String? displayName = userCredential.user!.displayName;
         String? email = userCredential.user!.email;
         String? photoURL = userCredential.user!.photoURL;
@@ -163,10 +159,9 @@ ElevatedButton.icon(
         print("Email: $email");
         print("PhotoURL: $photoURL");
 
-        // Après connexion réussie, redirection vers Menu/Home
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => HomePage()), // ou MenuPage()
+          MaterialPageRoute(builder: (_) => HomePage()),
         );
       }
     } catch (e) {
@@ -204,7 +199,6 @@ ElevatedButton.icon(
   );
 }
 
-// ***** LABEL *****
 Widget _label(String text) {
   return Align(
     alignment: Alignment.centerLeft,
@@ -219,7 +213,6 @@ Widget _label(String text) {
   );
 }
 
-// ***** CHAMP NEUMORPHIC *****
 Widget _neuField({
   required TextEditingController controller,
   required String hint,
@@ -249,7 +242,6 @@ Widget _neuField({
   );
 }
 
-// ***** BOUTON NEUMORPHIC *****
 Widget _neuButton({
   required String text,
   required VoidCallback? onPressed,

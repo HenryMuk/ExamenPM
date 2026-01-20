@@ -4,7 +4,6 @@ class ProductService {
   final CollectionReference _productsRef =
       FirebaseFirestore.instance.collection('produits');
 
-  // Ajouter un produit
   Future<void> addProduct(String nom, String description, double prix) async {
     await _productsRef.add({
       'nom': nom,
@@ -14,7 +13,6 @@ class ProductService {
     });
   }
 
-  // Récupérer tous les produits
   Stream<QuerySnapshot> getProducts() {
     return _productsRef.orderBy('dateCreation', descending: true).snapshots();
   }

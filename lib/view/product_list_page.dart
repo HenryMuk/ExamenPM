@@ -14,12 +14,12 @@ class ProductListPage extends StatelessWidget {
   title: const Text(
     "Liste des produits",
     style: TextStyle(
-      color: Colors.white, // couleur du texte ici
+      color: Colors.white,
       fontWeight: FontWeight.bold,
     ),
   ),
-  backgroundColor: const Color(0xFF1F1C2C), // fond sombre
-  iconTheme: const IconThemeData(color: Colors.white), // couleur des icônes (flèche retour)
+  backgroundColor: const Color(0xFF1F1C2C),
+  iconTheme: const IconThemeData(color: Colors.white),
 ),
 
       backgroundColor: const Color(0xFF0E1115),

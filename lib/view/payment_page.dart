@@ -29,7 +29,6 @@ class _PaymentPageState extends State<PaymentPage> {
     final phone = _phoneController.text.trim();
     final amountText = _amountController.text.trim();
 
-    // Validation
     if (phone.isEmpty) {
       _showError('Veuillez entrer un numéro de téléphone');
       return;
@@ -132,7 +131,6 @@ class _PaymentPageState extends State<PaymentPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Carte de titre
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -168,7 +166,6 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
               const SizedBox(height: 24),
 
-              // Sélection du fournisseur
               const Text(
                 'Fournisseur',
                 style: TextStyle(
@@ -210,7 +207,6 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
               const SizedBox(height: 20),
 
-              // Numéro de téléphone
               const Text(
                 'Numéro de téléphone',
                 style: TextStyle(
@@ -240,7 +236,6 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
               const SizedBox(height: 20),
 
-              // Montant
               const Text(
                 'Montant (USD)',
                 style: TextStyle(
@@ -272,7 +267,6 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
               const SizedBox(height: 24),
 
-              // Bouton de paiement
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF928DAB),
@@ -302,59 +296,7 @@ class _PaymentPageState extends State<PaymentPage> {
               ),
               const SizedBox(height: 24),
 
-              // Affichage du résultat
-            //   if (_paymentResult != null) ...[
-            //     Container(
-            //       padding: const EdgeInsets.all(16),
-            //       decoration: BoxDecoration(
-            //         color: _paymentResult!.success
-            //             ? Colors.green.withOpacity(0.1)
-            //             : Colors.red.withOpacity(0.1),
-            //         borderRadius: BorderRadius.circular(12),
-            //         border: Border.all(
-            //           color: _paymentResult!.success
-            //               ? Colors.green
-            //               : Colors.red,
-            //         ),
-            //       ),
-            //       child: Column(
-            //         crossAxisAlignment: CrossAxisAlignment.start,
-            //         children: [
-            //           Text(
-            //             _paymentResult!.success ? '✅ Succès' : '❌ Erreur',
-            //             style: TextStyle(
-            //               color: _paymentResult!.success
-            //                   ? Colors.green
-            //                   : Colors.red,
-            //               fontSize: 16,
-            //               fontWeight: FontWeight.bold,
-            //             ),
-            //           ),
-            //           const SizedBox(height: 12),
-            //           _buildResultRow(
-            //             'Référence:',
-            //             _paymentResult!.reference,
-            //           ),
-            //           _buildResultRow(
-            //             'Transaction ID:',
-            //             _paymentResult!.transactionId,
-            //           ),
-            //           _buildResultRow(
-            //             'Montant:',
-            //             '${_paymentResult!.amount} ${_paymentResult!.currency}',
-            //           ),
-            //           _buildResultRow(
-            //             'Statut:',
-            //             _paymentResult!.status,
-            //           ),
-            //           _buildResultRow(
-            //             'Message:',
-            //             _paymentResult!.message,
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ],
+
             ],
           ),
         ),

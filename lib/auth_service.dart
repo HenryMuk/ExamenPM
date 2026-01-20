@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  /// Connexion Google
   Future<UserCredential> signInWithGoogle() async {
     GoogleSignInAccount? googleUser;
 
@@ -33,7 +32,6 @@ class AuthService {
     return userCredential;
   }
 
-  /// Connexion Email/Password
   Future<UserCredential> signInWithEmail(String email, String password) async {
     final userCredential = await _auth.signInWithEmailAndPassword(
       email: email,
@@ -43,7 +41,6 @@ class AuthService {
     return userCredential;
   }
 
-  /// Inscription Email/Password
   Future<UserCredential> registerWithEmail(String email, String password) async {
     final userCredential = await _auth.createUserWithEmailAndPassword(
       email: email,
@@ -53,19 +50,16 @@ class AuthService {
     return userCredential;
   }
 
-  /// Déconnexion
   Future<void> signOut() async {
     await _auth.signOut();
     await _saveLoginState(false);
   }
 
-  /// Sauvegarde état connexion (optionnel)
   Future<void> _saveLoginState(bool isLoggedIn) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', isLoggedIn);
   }
 
-  /// ✅ VÉRIFICATION CORRECTE DE CONNEXION
   Future<bool> isLoggedIn() async {
     return FirebaseAuth.instance.currentUser != null;
   }
