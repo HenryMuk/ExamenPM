@@ -10,6 +10,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+
   await FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
 
   runApp(const MyApp());

@@ -12,6 +12,7 @@ class LocalCartService extends ChangeNotifier {
     _loadCart();
   }
 
+
   // Getter pour les articles
   List<Map<String, dynamic>> get cartItems => List.unmodifiable(_cartItems);
 

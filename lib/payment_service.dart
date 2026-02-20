@@ -12,6 +12,7 @@ class PaymentService {
       print('Numéro: ${request.phoneNumber}');
       print('Montant: ${request.amount} ${request.currency}');
 
+
       final Map<String, dynamic> payload = {
         'api_key': apiKey,
         'token': apiKey,
@@ -24,6 +25,7 @@ class PaymentService {
         'country': request.country,
         'callback': request.callbackUrl ?? 'https://example.com/callback',
       };
+
 
       final response = await http.post(
         Uri.parse(apiUrl),
