@@ -296,7 +296,10 @@ class _PaymentPageState extends State<PaymentPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context); // Fermer la popup
+              Navigator.pop(context, false); // Retourner false à recipe_detail_page
+            },
             child: const Text('Réessayer', style: TextStyle(color: Color(0xFF00FF9D))),
           ),
         ],
@@ -355,7 +358,7 @@ class _PaymentPageState extends State<PaymentPage> {
         _statusTimer?.cancel();
         // Fermer toutes les popups ouvertes
         if (Navigator.canPop(context)) {
-          Navigator.pop(context);
+          Navigator.pop(context); // Retourne null pour indiquer l'annulation
         }
         // Permettre la navigation arrière
         return true;

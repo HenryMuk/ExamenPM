@@ -134,6 +134,24 @@ class _HomePageState extends State<HomePage> {
                 height: 120,
                 width: double.infinity,
                 fit: BoxFit.cover,
+                cacheHeight: 150,
+                cacheWidth: 600,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+                  return Container(
+                    height: 120,
+                    color: Colors.grey[800],
+                    child: const Center(
+                      child: SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  );
+                },
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     height: 120,

@@ -123,8 +123,8 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
             ],
           ),
         );
-      } else {
-        // Paiement échoué
+      } else if (result == false) {
+        // Paiement échoué explicitement
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -146,6 +146,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
           ),
         );
       }
+      // Si result == null, c'est un simple retour arrière, ne rien afficher
     } catch (e) {
       // Fermer le popup de chargement
       Navigator.pop(context);
@@ -306,6 +307,24 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
               height: 250,
               width: double.infinity,
               fit: BoxFit.cover,
+              cacheHeight: 300,
+              cacheWidth: 1000,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) {
+                  return child;
+                }
+                return Container(
+                  height: 250,
+                  color: Colors.grey[800],
+                  child: const Center(
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                );
+              },
               errorBuilder: (context, error, stackTrace) {
                 return Container(
                   height: 250,
