@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:l4_seance_2/view/login_page.dart';
-import 'package:l4_seance_2/view/payment_page.dart';
+import 'package:l4_seance_2/view/card_page.dart'; // Nouvel import
 import '../models/recipe.dart';
 import '../recipe_service.dart';
+import '../product_service.dart'; // Import du service panier
 
 class RecipeDetailPage extends StatefulWidget {
   final Recipe recipe;
@@ -16,275 +17,9 @@ class RecipeDetailPage extends StatefulWidget {
 
 class _RecipeDetailPageState extends State<RecipeDetailPage> {
   final RecipeService _recipeService = RecipeService();
-  bool _isPurchased = false;
+  final ProductService _productService =
+      ProductService(); // Service pour le panier
   bool _isLoading = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkPurchaseStatus();
-  }
-
-  Future<void> _checkPurchaseStatus() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final purchasedIds = await _recipeService.getPurchasedRecipeIds(user.uid);
-      setState(() {
-        _isPurchased = purchasedIds.contains(widget.recipe.id);
-      });
-    }
-  }
-
-  Future<void> _handlePurchase() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      // Rediriger vers la page de connexion
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const LoginPage()),
-      );
-      return;
-    }
-
-    if (_isPurchased) {
-      // Si déjà acheté, montrer les détails complets
-      _showFullRecipe();
-      return;
-    }
-
-    // Afficher popup de transaction initiée
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1D22),
-        title: Text(
-          'Transaction initiée',
-          style: const TextStyle(color: Colors.white),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(color: Color(0xFF00FF9D)),
-            const SizedBox(height: 16),
-            Text(
-              'Votre paiement de ${widget.recipe.price.toStringAsFixed(2)} ${widget.recipe.currency} est en cours de traitement...',
-              style: const TextStyle(color: Colors.white70),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-
-    try {
-      // Procéder au paiement
-      final result = await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => PaymentPage(
-            productName: widget.recipe.title,
-            productDescription: widget.recipe.fullDescription,
-            productPrice: widget.recipe.price,
-            currency: widget.recipe.currency,
-          ),
-        ),
-      );
-
-      // Fermer le popup de chargement
-      Navigator.pop(context);
-
-      if (result == true) {
-        // Paiement réussi
-        await _recipeService.purchaseRecipe(user.uid, widget.recipe.id);
-        setState(() => _isPurchased = true);
-
-        // Afficher popup de succès
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF1A1D22),
-            title: Text(
-              'Paiement réussi !',
-              style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
-            ),
-            content: Text(
-              'Votre achat de "${widget.recipe.title}" a été confirmé. Vous pouvez maintenant accéder à la recette complète.',
-              style: const TextStyle(color: Colors.white70),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _showFullRecipe();
-                },
-                child: const Text('Voir la recette', style: TextStyle(color: Color(0xFF00FF9D))),
-              ),
-            ],
-          ),
-        );
-      } else if (result == false) {
-        // Paiement échoué explicitement
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF1A1D22),
-            title: Text(
-              'Paiement échoué',
-              style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-            ),
-            content: Text(
-              'Le paiement n\'a pas pu être traité. Veuillez réessayer.',
-              style: const TextStyle(color: Colors.white70),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Réessayer', style: TextStyle(color: Color(0xFF00FF9D))),
-              ),
-            ],
-          ),
-        );
-      }
-      // Si result == null, c'est un simple retour arrière, ne rien afficher
-    } catch (e) {
-      // Fermer le popup de chargement
-      Navigator.pop(context);
-
-      // Afficher popup d'erreur
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: const Color(0xFF1A1D22),
-          title: Text(
-            'Erreur',
-            style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-          ),
-          content: Text(
-            'Une erreur s\'est produite: $e',
-            style: const TextStyle(color: Colors.white70),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK', style: TextStyle(color: Color(0xFF00FF9D))),
-            ),
-          ],
-        ),
-      );
-    }
-  }
-
-  void _showFullRecipe() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1A1D22),
-        title: Text(
-          widget.recipe.title,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Description complète
-              Text(
-                'Description:',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                widget.recipe.fullDescription,
-                style: const TextStyle(color: Colors.white70, height: 1.4),
-              ),
-              const SizedBox(height: 16),
-
-              // Ingrédients
-              Text(
-                'Ingrédients:',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 8),
-              ...widget.recipe.ingredients.map((ingredient) => Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Row(
-                  children: [
-                    const Text('• ', style: TextStyle(color: Color(0xFF00FF9D))),
-                    Expanded(
-                      child: Text(
-                        ingredient,
-                        style: const TextStyle(color: Colors.white70),
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-              const SizedBox(height: 16),
-
-              // Instructions
-              Text(
-                'Instructions de préparation:',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 8),
-              ...widget.recipe.instructions.asMap().entries.map((entry) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 24,
-                      height: 24,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF00FF9D),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Text(
-                          '${entry.key + 1}',
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        entry.value,
-                        style: const TextStyle(color: Colors.white70, height: 1.4),
-                      ),
-                    ),
-                  ],
-                ),
-              )),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Fermer', style: TextStyle(color: Color(0xFF00FF9D))),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -310,9 +45,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
               cacheHeight: 300,
               cacheWidth: 1000,
               loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) {
-                  return child;
-                }
+                if (loadingProgress == null) return child;
                 return Container(
                   height: 250,
                   color: Colors.grey[800],
@@ -329,7 +62,8 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 return Container(
                   height: 250,
                   color: Colors.grey[800],
-                  child: const Icon(Icons.image, color: Colors.white54, size: 50),
+                  child:
+                      const Icon(Icons.image, color: Colors.white54, size: 50),
                 );
               },
             ),
@@ -392,20 +126,18 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: _isLoading ? null : _handlePurchase,
+                      onPressed: _isLoading ? null : _handleAddToCart,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _isPurchased
-                            ? Colors.green
-                            : const Color(0xFF00FF9D),
+                        backgroundColor: const Color(0xFF00FF9D),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                       child: _isLoading
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : Text(
-                              _isPurchased ? 'Voir la recette complète' : 'Acheter la recette',
-                              style: const TextStyle(
+                          : const Text(
+                              'Ajouter au panier',
+                              style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
@@ -420,5 +152,56 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _handleAddToCart() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      // Rediriger vers la page de connexion
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      // Ajouter la recette au panier via ProductService
+      await _productService.addToCart(
+        widget.recipe.title,
+        widget.recipe.fullDescription,
+        widget.recipe.price,
+      );
+
+      if (mounted) {
+        setState(() => _isLoading = false);
+
+        // Message de confirmation
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${widget.recipe.title} ajouté au panier'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Rediriger vers la page du panier
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const CardPage()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erreur lors de l\'ajout au panier : $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }
