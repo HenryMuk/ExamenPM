@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../product_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'card_page.dart'; // ← IMPORT À AJOUTER (adaptez le chemin)
 
 class ProductAddPage extends StatefulWidget {
   const ProductAddPage({super.key});
@@ -20,17 +21,13 @@ class _ProductAddPageState extends State<ProductAddPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-  title: const Text(
-    "Ajouter un produit",
-    style: TextStyle(
-      color: Colors.white,
-      fontWeight: FontWeight.bold,
-    ),
-  ),
-  backgroundColor: const Color(0xFF1F1C2C),
-  iconTheme: const IconThemeData(color: Colors.white),
-),
-
+        title: const Text(
+          "Ajouter un produit",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color(0xFF1F1C2C),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       backgroundColor: const Color(0xFF0E1115),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -82,34 +79,65 @@ class _ProductAddPageState extends State<ProductAddPage> {
               ),
               onPressed: () async {
                 setState(() => _isLoading = true);
-                String nom = _nomController.text;
-                String desc = _descriptionController.text;
-                double prix = double.tryParse(_prixController.text) ?? 0;
 
-                if (nom.isNotEmpty && prix > 0) {
-                  await _productService.addProduct(nom, desc, prix);
-                  _nomController.clear();
-                  _descriptionController.clear();
-                  _prixController.clear();
+                // Nettoyage des champs
+                String nom = _nomController.text.trim();
+                String desc = _descriptionController.text.trim();
+                double? prix = double.tryParse(_prixController.text.trim());
 
-                  setState(() => _isLoading = false);
+                if (nom.isNotEmpty && prix != null && prix > 0) {
+                  try {
+                    // Ajout du produit via le service (doit ajouter au panier)
+                    await _productService.addProduct(nom, desc, prix);
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Produit ajouté avec succès")),
-                  );
+                    // Réinitialisation des champs
+                    _nomController.clear();
+                    _descriptionController.clear();
+                    _prixController.clear();
+
+                    if (mounted) {
+                      setState(() => _isLoading = false);
+
+                      // Redirection vers la page du panier (card_page.dart)
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CardPage(),
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    // Gestion des erreurs lors de l'ajout
+                    if (mounted) {
+                      setState(() => _isLoading = false);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Erreur lors de l'ajout : $e")),
+                      );
+                    }
+                  }
                 } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Veuillez remplir correctement les champs")),
-                  );
+                  // Champs invalides
+                  if (mounted) {
+                    setState(() => _isLoading = false);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          "Veuillez remplir correctement les champs",
+                        ),
+                      ),
+                    );
+                  }
                 }
               },
-              child:  _isLoading
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                "Ajouter produit",
-                style: 
-                TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              child: _isLoading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text(
+                      "Ajouter produit",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
           ],
         ),
