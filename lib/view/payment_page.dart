@@ -125,7 +125,7 @@ class _PaymentPageState extends State<PaymentPage> {
       setState(() => _isLoading = false);
       // Fermer la popup d'initiation
       Navigator.pop(context);
-      //_showPaymentFailed('Erreur: ${e.toString()}');
+      _showPaymentFailed('Erreur: ${e.toString()}');
     }
   }
 
