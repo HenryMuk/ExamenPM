@@ -8,9 +8,9 @@ class PaymentService {
 
   Future<PaymentResponse> initiatePayment(PaymentRequest request) async {
     try {
-      print('🔄 Initiation paiement: ${request.reference}');
-      print('📱 Numéro: ${request.phoneNumber}');
-      print('💰 Montant: ${request.amount} ${request.currency}');
+      print('Initiation paiement: ${request.reference}');
+      print('Numéro: ${request.phoneNumber}');
+      print('Montant: ${request.amount} ${request.currency}');
 
       final Map<String, dynamic> payload = {
         'api_key': apiKey,
@@ -40,8 +40,8 @@ class PaymentService {
         },
       );
 
-      print('📊 Status: ${response.statusCode}');
-      print('📨 Response: ${response.body}');
+      print('Status: ${response.statusCode}');
+      print('Response: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final jsonResponse = jsonDecode(response.body);
@@ -60,7 +60,7 @@ class PaymentService {
         );
       }
     } catch (e) {
-      print('❌ Erreur: $e');
+      print('Erreur: $e');
       return PaymentResponse(
         success: false,
         transactionId: '',

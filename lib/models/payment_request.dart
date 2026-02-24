@@ -55,14 +55,62 @@ class PaymentResponse {
   });
 
   factory PaymentResponse.fromJson(Map<String, dynamic> json) {
+    // Try to parse several possible API response shapes (flat or nested under `results`).
+    final results = json['results'] is Map<String, dynamic> ? json['results'] as Map<String, dynamic> : null;
+
+    String status = 'PENDING';
+    if (json['status'] != null) {
+      status = (json['status'] as String).toUpperCase();
+    } else if (results != null) {
+      final st = results['status'];
+      if (st is Map && st['name'] != null) {
+        status = (st['name'] as String).toUpperCase();
+      } else if (st is String) {
+        status = st.toUpperCase();
+      }
+    }
+
+    final transactionId = json['orderNumber'] ?? json['transactionId'] ?? json['transaction_id'] ?? '';
+    final reference = json['reference'] ?? '';
+
+    double amount = 0;
+    String currency = 'USD';
+    String message = json['message'] ?? '';
+
+    if (json['amount'] != null) {
+      try {
+        amount = (json['amount'] as num).toDouble();
+      } catch (_) {}
+    }
+
+    if (results != null) {
+      final details = results['details'];
+      if (details is Map<String, dynamic>) {
+        if (details['amount'] != null) {
+          try {
+            amount = (details['amount'] as num).toDouble();
+          } catch (_) {}
+        }
+        if (details['currency'] != null) {
+          currency = details['currency'] as String;
+        }
+      }
+
+      // message / description might be in results.status.description
+      final st = results['status'];
+      if (st is Map && st['description'] != null && (message == '' || message == null)) {
+        message = st['description'] as String;
+      }
+    }
+
     return PaymentResponse(
       success: json['success'] ?? false,
-      transactionId: json['transactionId'] ?? json['transaction_id'] ?? '',
-      reference: json['reference'] ?? '',
-      amount: (json['amount'] ?? 0).toDouble(),
-      currency: json['currency'] ?? 'USD',
-      status: json['status'] ?? 'PENDING',
-      message: json['message'] ?? '',
+      transactionId: transactionId ?? '',
+      reference: reference ?? '',
+      amount: amount,
+      currency: currency,
+      status: status,
+      message: message ?? '',
       timestamp: DateTime.now(),
     );
   }

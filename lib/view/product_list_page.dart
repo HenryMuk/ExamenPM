@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../product_service.dart';
+import 'payment_page.dart';
 
 class ProductListPage extends StatelessWidget {
   final ProductService _productService = ProductService();
@@ -53,6 +54,19 @@ class ProductListPage extends StatelessWidget {
                       "${data['prix'] ?? 0} \$",
                       style: const TextStyle(color: Colors.white),
                     ),
+                    onTap: () {
+                      final double prix = (data['prix'] ?? 0).toDouble();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PaymentPage(
+                            productName: data['nom'] ?? '',
+                            productDescription: data['description'] ?? '',
+                            productPrice: prix,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 );
               },
