@@ -11,6 +11,7 @@ class CardPage extends StatefulWidget {
   State<CardPage> createState() => _CardPageState();
 }
 
+
 class _CardPageState extends State<CardPage> {
   final ProductService _productService = ProductService();
   final user = FirebaseAuth.instance.currentUser;

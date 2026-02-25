@@ -11,6 +11,7 @@ class Recipe {
   final List<String> ingredients;
   final List<String> instructions;
 
+
   Recipe({
     required this.id,
     required this.title,
@@ -24,6 +25,7 @@ class Recipe {
     required this.ingredients,
     required this.instructions,
   });
+
 
   factory Recipe.fromJson(Map<String, dynamic> json) {
     return Recipe(
@@ -40,6 +42,7 @@ class Recipe {
       instructions: List<String>.from(json['instructions'] ?? []),
     );
   }
+
 
   Map<String, dynamic> toJson() {
     return {
