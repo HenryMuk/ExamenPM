@@ -75,7 +75,6 @@ class PaymentService {
     }
   }
 
-
   Future<PaymentStatus> checkPaymentStatus(String reference) async {
     try {
       final Map<String, dynamic> payload = {
@@ -118,6 +117,7 @@ class PaymentService {
       );
     }
   }
+
 
   static String generateReference() {
     return 'REF-${DateTime.now().millisecondsSinceEpoch}-${(DateTime.now().microsecond % 1000).toString().padLeft(3, '0')}';
