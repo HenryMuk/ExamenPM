@@ -806,6 +806,7 @@ class RecipeService {
     ),
   ];
 
+
   Future<List<Recipe>> getRecipes() async {
     // Pour cette démo, retourner les données fictives
     // En production, vous pourriez récupérer depuis Firestore
