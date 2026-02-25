@@ -3,9 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:l4_seance_2/view/login_page.dart';
 import 'package:l4_seance_2/view/recipe_detail_page.dart';
 import 'package:l4_seance_2/view/profile_page.dart';
+import 'package:l4_seance_2/view/card_page.dart'; // ← Import ajouté
 import '../recipe_service.dart';
 import '../models/recipe.dart';
-
+// Optionnel : pour le badge
+import 'package:badges/badges.dart' as badges;
+import '../product_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -58,6 +61,41 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         actions: [
+          // Icône du panier (simple)
+          IconButton(
+            icon: const Icon(Icons.shopping_cart, color: Colors.white),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CardPage()),
+              );
+            },
+          ),
+          // Optionnel : icône du panier avec badge (décommentez et adaptez si besoin)
+
+          StreamBuilder<QuerySnapshot>(
+            stream: ProductService().streamCartItems(),
+            builder: (context, snapshot) {
+              int itemCount = snapshot.data?.docs.length ?? 0;
+              return badges.Badge(
+                badgeContent: Text(
+                  '$itemCount',
+                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                ),
+                position: badges.BadgePosition.topEnd(top: 0, end: 0),
+                child: IconButton(
+                  icon: const Icon(Icons.shopping_cart, color: Colors.white),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const CardPage()),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+
           if (user != null)
             IconButton(
               icon: const Icon(Icons.person, color: Colors.white),
@@ -128,7 +166,8 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(15)),
               child: Image.network(
                 recipe.imageUrl,
                 height: 120,
@@ -225,7 +264,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-
-
 }
