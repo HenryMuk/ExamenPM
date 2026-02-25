@@ -19,6 +19,7 @@ class PaymentRequest {
     this.callbackUrl,
   });
 
+
   Map<String, dynamic> toJson() {
     return {
       'reference': reference,
@@ -33,6 +34,7 @@ class PaymentRequest {
   }
 }
 
+
 class PaymentResponse {
   final bool success;
   final String transactionId;
@@ -42,6 +44,7 @@ class PaymentResponse {
   final String status;
   final String message;
   final DateTime timestamp;
+
 
   PaymentResponse({
     required this.success,
@@ -53,6 +56,7 @@ class PaymentResponse {
     required this.message,
     required this.timestamp,
   });
+
 
   factory PaymentResponse.fromJson(Map<String, dynamic> json) {
     // Try to parse several possible API response shapes (flat or nested under `results`).
@@ -83,6 +87,7 @@ class PaymentResponse {
       } catch (_) {}
     }
 
+
     if (results != null) {
       final details = results['details'];
       if (details is Map<String, dynamic>) {
@@ -103,6 +108,7 @@ class PaymentResponse {
       }
     }
 
+
     return PaymentResponse(
       success: json['success'] ?? false,
       transactionId: transactionId ?? '',
@@ -116,10 +122,12 @@ class PaymentResponse {
   }
 }
 
+
 class PaymentStatus {
   final String reference;
   final String status;
   final String? errorMessage;
+
 
   PaymentStatus({
     required this.reference,

@@ -5,6 +5,7 @@ class RecipeService {
   final CollectionReference _recipesRef =
       FirebaseFirestore.instance.collection('recipes');
 
+
   // Données fictives pour les recettes
   final List<Recipe> _mockRecipes = [
     Recipe(
@@ -824,6 +825,7 @@ class RecipeService {
       'purchaseDate': FieldValue.serverTimestamp(),
     });
   }
+
 
   Future<List<String>> getPurchasedRecipeIds(String userId) async {
     final snapshot = await FirebaseFirestore.instance
