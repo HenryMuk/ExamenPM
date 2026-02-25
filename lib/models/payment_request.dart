@@ -8,7 +8,7 @@ class PaymentRequest {
   final String country;
   final String? callbackUrl;
 
-  PaymentRequest({
+ PaymentRequest({
     required this.reference,
     required this.amount,
     this.currency = 'USD',

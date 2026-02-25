@@ -26,7 +26,6 @@ class PaymentService {
         'callback': request.callbackUrl ?? 'https://example.com/callback',
       };
 
-
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {
