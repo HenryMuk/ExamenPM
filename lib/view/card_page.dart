@@ -1,8 +1,10 @@
 // view/card_page.dart
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../product_service.dart';
 import 'payment_page.dart';
+import 'login_page.dart'; // Ajouté pour la redirection
 
 class CardPage extends StatefulWidget {
   const CardPage({super.key});
@@ -13,9 +15,59 @@ class CardPage extends StatefulWidget {
 
 class _CardPageState extends State<CardPage> {
   final ProductService _productService = ProductService();
+  final user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
+    // Vérifier si l'utilisateur est connecté
+    if (user == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Mon Panier",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          backgroundColor: const Color(0xFF1F1C2C),
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        backgroundColor: const Color(0xFF0E1115),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.lock_outline,
+                size: 80,
+                color: Colors.white.withOpacity(0.3),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                "Connectez-vous pour voir votre panier",
+                style: TextStyle(color: Colors.white70, fontSize: 16),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF928DAB),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const LoginPage()),
+                  );
+                },
+                child: const Text("Se connecter"),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -24,16 +76,51 @@ class _CardPageState extends State<CardPage> {
         ),
         backgroundColor: const Color(0xFF1F1C2C),
         iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          // Bouton pour vider le panier (optionnel)
+          IconButton(
+            icon: const Icon(Icons.delete_sweep, color: Colors.white70),
+            onPressed: _showClearCartDialog,
+          ),
+        ],
       ),
       backgroundColor: const Color(0xFF0E1115),
       body: StreamBuilder<QuerySnapshot>(
         stream: _productService.streamCartItems(),
         builder: (context, snapshot) {
+          // Gestion des erreurs améliorée
           if (snapshot.hasError) {
+            String errorMessage = "Erreur de chargement";
+            if (snapshot.error.toString().contains('permission-denied')) {
+              errorMessage = "Permission refusée. Veuillez vous reconnecter.";
+            }
             return Center(
-              child: Text(
-                "Erreur : ${snapshot.error}",
-                style: const TextStyle(color: Colors.white70),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 60,
+                    color: Colors.red.withOpacity(0.5),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    errorMessage,
+                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF928DAB),
+                      foregroundColor: Colors.white,
+                    ),
+                    onPressed: () {
+                      setState(() {}); // Recharger
+                    },
+                    child: const Text("Réessayer"),
+                  ),
+                ],
               ),
             );
           }
@@ -152,7 +239,16 @@ class _CardPageState extends State<CardPage> {
           const SizedBox(height: 16),
           const Text(
             "Votre panier est vide",
-            style: TextStyle(color: Colors.white70, fontSize: 18),
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "Ajoutez des recettes depuis la page d'accueil",
+            style: TextStyle(color: Colors.white.withOpacity(0.5)),
           ),
           const SizedBox(height: 24),
           ElevatedButton(
@@ -164,7 +260,7 @@ class _CardPageState extends State<CardPage> {
               ),
             ),
             onPressed: () => Navigator.pop(context),
-            child: const Text("Ajouter des produits"),
+            child: const Text("Découvrir des recettes"),
           ),
         ],
       ),
@@ -207,13 +303,15 @@ class _CardPageState extends State<CardPage> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            onPressed: () {
-              // Redirection vers la page de paiement
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const PaymentPage()),
-              );
-            },
+            onPressed: total > 0
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PaymentPage()),
+                    );
+                  }
+                : null, // Désactiver si panier vide
             child: const Text("Valider"),
           ),
         ],
@@ -224,10 +322,72 @@ class _CardPageState extends State<CardPage> {
   Future<void> _removeItem(String itemId) async {
     try {
       await _productService.removeFromCart(itemId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Article supprimé du panier"),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 1),
+        ),
+      );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erreur lors de la suppression : $e")),
+        SnackBar(
+          content: Text("Erreur lors de la suppression : ${e.toString()}"),
+          backgroundColor: Colors.red,
+        ),
       );
     }
+  }
+
+  void _showClearCartDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1F1C2C),
+        title: const Text(
+          "Vider le panier",
+          style: TextStyle(color: Colors.white),
+        ),
+        content: const Text(
+          "Êtes-vous sûr de vouloir supprimer tous les articles ?",
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              "Annuler",
+              style: TextStyle(color: Colors.white70),
+            ),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+              try {
+                await _productService.clearCart();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Panier vidé"),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("Erreur : ${e.toString()}"),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            child: const Text("Vider"),
+          ),
+        ],
+      ),
+    );
   }
 }
