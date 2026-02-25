@@ -826,7 +826,6 @@ class RecipeService {
     });
   }
 
-
   Future<List<String>> getPurchasedRecipeIds(String userId) async {
     final snapshot = await FirebaseFirestore.instance
         .collection('purchases')
