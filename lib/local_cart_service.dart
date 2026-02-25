@@ -19,7 +19,7 @@ class LocalCartService extends ChangeNotifier {
   // Getter pour le nombre d'articles
   int get itemCount => _cartItems.length;
 
-  // Getter pour le total
+  // Update Getter pour le total
   double get total {
     double sum = 0;
     for (var item in _cartItems) {
@@ -153,7 +153,7 @@ class LocalCartService extends ChangeNotifier {
     }
   }
 
-  // Obtenir les articles groupés par nom (pour éviter les doublons)
+  // Obtenir les articles groupés par nom (en vue d'éviter les doublons)
   Map<String, List<Map<String, dynamic>>> getGroupedItems() {
     final Map<String, List<Map<String, dynamic>>> grouped = {};
     for (var item in _cartItems) {
