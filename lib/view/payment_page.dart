@@ -14,7 +14,7 @@ class PaymentPage extends StatefulWidget {
     this.productName,
     this.productDescription,
     this.productPrice,
-    this.currency = 'USD',
+    this.currency = 'USD',     
   });
 
   @override

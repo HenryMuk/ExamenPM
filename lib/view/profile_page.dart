@@ -33,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
       final allRecipes = await _recipeService.getRecipes();
       final purchasedRecipes = allRecipes
           .where((recipe) => purchasedIds.contains(recipe.id))
-          .toList();
+          .toList();   
 
       setState(() {
         _purchasedRecipes = purchasedRecipes;
