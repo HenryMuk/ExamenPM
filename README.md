@@ -1,5 +1,6 @@
 # Examen Flutter, Application de Recettes et Courses
 
+
 ## Description
 
 Cette application Flutter est une plateforme e-commerce dédiée aux recettes africaines. Les utilisateurs peuvent s'inscrire, se connecter, parcourir une liste de recettes, consulter les détails des recettes et effectuer des paiements pour accéder aux details des recettes. L'application utilise Firebase pour l'authentification et le stockage des données, ainsi qu'une intégration de paiement via l'API Labyrinthe.
