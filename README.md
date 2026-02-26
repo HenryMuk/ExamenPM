@@ -91,5 +91,6 @@ lib/
     ├── product_list_page.dart   # Liste des recettes
     ├── product_add_page.dart    # Ajout de recette
     └── payment_page.dart        # Page de paiement
+    --- cart_service.dart
 ```
 
